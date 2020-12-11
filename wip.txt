@@ -1,0 +1,61 @@
+                                    Work in progress Document
+                                        [10 points total]
+                Please submit a concise plan of your project and your work in progress
+
+Main problem to solve
+=================================
+The main problem to solve is comparison of pro players in League of Legends to non-pro players, such that 
+
+Description of dataset, and you will you obtain it
+=================================
+I pulled a dataset from Kaggle https://www.kaggle.com/huitongkou/league-of-legends-pro-matches-data. 
+This dataset has the most in-depth pro game data from 2016-2019 matches, so I'm primarily using that.
+
+Hypothesis
+Statistical & Machine Learning methods you plan to use (and why)
+=================================
+The main method that I'll use is K-means clustering, as a lot of the problem I have chosen is determining 
+the parameters that I can use for clustering. 
+
+The following is not particularly a statistical model, but it is the next step that my project will take. 
+Going forward, for individual player comparison, I will need to interface with the Riot API using a development key to get a reasonable average to get the average stats of a player, which I will then use to assign to a cluster. 
+The data is scattered around in multiple different endpoints, so my next steps after having constructed the clusters for pro-player data will be for that. 
+
+What business applications do you think your findings will have?
+Please keep it concise. A paragraph with five sentences would suffice. It is understood that things might
+change during the course of your research.
+=================================
+For normal players, they often try to model off of pro-player builds and adapt their playstyles. However, 
+there are many different types of players in their roles, and picking the player to model after is difficult.
+For example, a primarily aggressive support preferring to lane-pressure will probably build differently from 
+a support player that prefers to roam, and will consequently have different stats throughout the game. 
+
+The main goal serves as a method of picking pro-player gameplay to emulate. A consideration is that non-pros
+obviously lack the raw skill taht pros have, but they can do their best. A future application could be that with
+sets of predetermined players, we could use the clustering method alongside collaborative filtering to recommend
+players that are similar to a game that the player has enjoyed/won in the past, and try to select similar players 
+to those that they had in that game to emulate the similarily good experience. 
+
+Submit a rough copy of your work so far, including code, narrative, and visualizations. An annotated ipython
+notebook would suffice. Briefly describe your successess and challenges, and explain next steps. Your peers and
+instructors will provide feedback.
+=================================
+Successes: 
+I implemented the basic clustering with the surface level data, so the project is well on its way. 
+I also have a good idea of what steps I need to take next to complete my project, so while I am not too deep
+into the nitty gritty at the moment, I've mapped out what I need to do and all thats left is implementation. 
+I've also thought of some nice-to-have stats that I could work with pro-data, which aren't necessarily 
+related to the goal but are  some stats that would be interesting to take a look at. 
+
+Challenges:
+Finding enough data for game processing, and having enough parameters to process was the greatest challenge. 
+Comparing something that is very surface level (like first death) is not a good indicator on its own for much. 
+To ensure that the data is more comprehensive and has meaning, I will want to do some additional analysis on 
+the actual player games interfacing with the Riot API to try and gain more insights on the reason that those 
+barebones numerical columsn are that value. 
+
+That means, the challenge is not necessarily solved. Although I searched all 60-something datasets on Kaggle, 
+and around the internet, I wasn't able to find a really detailed dataset with many in-game statistics, so I
+will have to manually pull that data from the API itself. That being said, with the development key request 
+limits, that may just be a lot of brainless labor, so I will likely want to write a script to automate it later for it as well. 
+
