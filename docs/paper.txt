@@ -1,6 +1,6 @@
 Description of problem and hypothesis 
     - interested in how challenjour players compare in comparison to pro players
-    
+
 Detailed description your data set
     - found on kaggle, used to extract all the pro games
     - found on kaggle, used to extract all the challenjour games
@@ -17,6 +17,7 @@ Description of your dataset and how it was obtained
 Detailed description your models
     Describe what kinds of statistical methods and machine learning algorithms you used
     - clustering
+    - try knn after this? maybe it'll be better for assigning idk who knows
 
     How did you validate your models?
     - external clustering validation; compare top/top players and ensure that most of same role are in the same cluster
