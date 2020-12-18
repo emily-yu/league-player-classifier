@@ -234,10 +234,11 @@ def flatten(data, participant):
 
     return (qualt_stats, metrics)
 
-# data = get_match_data(match_urls[0:5])
-data = get_match_data(match_urls)
+data = get_match_data(match_urls[0:2])
+# data = get_match_data(match_urls)
 
 writeable = []
+writeableq = [] # qualitative values (not used for clustering)
 for first_match in data:
 # first_match = data[0].json()
     first_match = first_match.json()
@@ -261,6 +262,12 @@ for first_match in data:
     # writeable.append(flattened[1])
     writeable.append(base)
 
+    base = {
+        "summonerName": flattened[0]["summonerName"]
+    }
+    base.update(flattened[0])
+    writeableq.append(base)
+
 # put into csv
 import csv
 def to_csv(row, filepath):
@@ -269,12 +276,18 @@ def to_csv(row, filepath):
         w.writerow(row)
 
 ### write header
-with open('write.csv', 'w') as f:  # Just use 'w' mode in 3.x
+with open('write_quant.csv', 'w') as f:  # Just use 'w' mode in 3.x
     w = csv.DictWriter(f, flattened[1].keys())
+    w.writeheader()
+with open('write_qual.csv', 'w') as f:  # Just use 'w' mode in 3.x
+    w = csv.DictWriter(f, flattened[0].keys())
     w.writeheader()
 
 ### write data
-# to_csv(flattened[1], 'write.csv')
-# to_csv(flattened[1], 'write.csv')
 for match in writeable:
-    to_csv(match, 'write.csv')
+    to_csv(match, 'write_quant.csv')
+
+for match in writeableq:
+    to_csv(match, 'write_qual.csv')
+
+# def process
