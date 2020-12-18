@@ -7,19 +7,20 @@ players = df['accountId'].unique()
 
 
 
-playerLimit = 2 # temporary - for testing
+playerLimit = 10 # temporary - for testing
+match_urls = []
 for player in players:
 
-    # for testing
-    playerLimit -= 1
-    if playerLimit == 0: break
+    # # for testing
+    # playerLimit -= 1
+    # if playerLimit == 0: break
 
     player_games = df[df['accountId'] == player]
     player_games = player_games.drop(columns=['accountId'])
     print(player)
     print(player_games['gameId'].to_list())
 
-    match_urls = player_games['gameId'].to_list() #for testing bottom function
+    match_urls += player_games['gameId'].to_list() #for testing bottom function
 
 
 
@@ -43,8 +44,8 @@ def get_match_data(match_ids):
         x = requests.get(request_url)
         if x.status_code == 429: # to go rapidfire...
             # print("429", ind)
-            # time.sleep(125) # sleep for 2 minutes + 5 seconds in case
-            time.sleep(60) # sleep for 1 min bc my computer is slow lul
+            time.sleep(125) # sleep for 2 minutes + 5 seconds in case
+            # time.sleep(60) # sleep for 1 min bc my computer is slow lul
             x = requests.get(request_url) # retry
 
         if x.status_code == 504: 
