@@ -72,8 +72,8 @@ def compile_participant_data(request):
 
 # flatten into stats we can use
 def flatten(data, participant):
-    print(json.dumps(data, indent=2))
-    print(json.dumps(participant, indent=2))
+    # print(json.dumps(data, indent=2))
+    # print(json.dumps(participant, indent=2))
 
     # utility
     def if_true(condition, true, false=None):
@@ -83,6 +83,9 @@ def flatten(data, participant):
     def select_properties(quals, select_from, prefix=''):
         result = {}
         for item in quals: 
+            # convert bools to 1 or 0
+            if isinstance(select_from[item], bool):
+                select_from[item] = int(select_from[item] == True)
             result[prefix+item] = select_from[item]
         return result
 
@@ -208,9 +211,6 @@ def flatten(data, participant):
     metrics.update(select_properties(props, participant["timeline"]["damageTakenPerMinDeltas"], 'damageTakenPerMin_'))
     metrics.update(select_properties(props, participant["timeline"]["damageTakenDiffPerMinDeltas"], 'damageTakenDiffPerMin_'))
 
-    # [TODO] convert bools to 1 or 0
-    metrics["result"]: if_true(stats["win"] == True, 1, 0)
-
     return (qualt_stats, metrics)
 
 data = get_match_data(match_urls[0:2])
@@ -225,3 +225,19 @@ def pj(inp):
     print(json.dumps(inp, indent=2))
 pj(flattened[0])
 pj(flattened[1])
+
+# put into csv
+import csv
+def to_csv(row, filepath):
+    with open(filepath, 'w') as f:  # Just use 'w' mode in 3.x
+        w = csv.DictWriter(f, row.keys())
+        # w.writeheader()
+        w.writerow(row)
+
+### write header
+with open('write.csv', 'w') as f:  # Just use 'w' mode in 3.x
+    w = csv.DictWriter(f, flattened[1].keys())
+    w.writeheader()
+
+### write data
+to_csv(flattened[1], 'write.csv')
