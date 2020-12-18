@@ -83,6 +83,12 @@ def flatten(data, participant):
     def select_properties(quals, select_from, prefix=''):
         result = {}
         for item in quals: 
+
+            # ensure key is there, if not signal taht isn't there
+            if item not in select_from:
+                result[prefix+item] = "NaN"
+                return result
+
             # convert bools to 1 or 0
             if isinstance(select_from[item], bool):
                 select_from[item] = int(select_from[item] == True)
@@ -214,24 +220,29 @@ def flatten(data, participant):
     return (qualt_stats, metrics)
 
 data = get_match_data(match_urls[0:2])
-first_match = data[0].json()
 
-# [TODO]: change compile_participant_data to get all participant data
-match_data = compile_participant_data(first_match)
-print(json.dumps(match_data, indent=2))
+writeable = []
+for first_match in data:
+# first_match = data[0].json()
+    first_match = first_match.json()
 
-flattened = flatten(first_match, match_data)
-def pj(inp):
-    print(json.dumps(inp, indent=2))
-pj(flattened[0])
-pj(flattened[1])
+    # [TODO]: change compile_participant_data to get all participant data
+    match_data = compile_participant_data(first_match)
+    print(json.dumps(match_data, indent=2))
+
+    flattened = flatten(first_match, match_data)
+    def pj(inp):
+        print(json.dumps(inp, indent=2))
+    pj(flattened[0])
+    pj(flattened[1])
+
+    writeable.append(flattened[1])
 
 # put into csv
 import csv
 def to_csv(row, filepath):
-    with open(filepath, 'w') as f:  # Just use 'w' mode in 3.x
+    with open(filepath, 'a') as f:  # Just use 'w' mode in 3.x
         w = csv.DictWriter(f, row.keys())
-        # w.writeheader()
         w.writerow(row)
 
 ### write header
@@ -240,4 +251,7 @@ with open('write.csv', 'w') as f:  # Just use 'w' mode in 3.x
     w.writeheader()
 
 ### write data
-to_csv(flattened[1], 'write.csv')
+# to_csv(flattened[1], 'write.csv')
+# to_csv(flattened[1], 'write.csv')
+for match in writeable:
+    to_csv(match, 'write.csv')
