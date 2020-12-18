@@ -1,0 +1,5 @@
+Overview of problem and hypothesis
+Overview of your data
+Modeling techniques used and why (save the details for your paper)
+Conclusions
+Further research and/or business opportunities

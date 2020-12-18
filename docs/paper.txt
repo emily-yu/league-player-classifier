@@ -1,0 +1,33 @@
+Description of problem and hypothesis 
+    - interested in how challenjour players compare in comparison to pro players
+    
+Detailed description your data set
+    - found on kaggle, used to extract all the pro games
+    - found on kaggle, used to extract all the challenjour games
+
+Description of your dataset and how it was obtained 
+    Some basic statistics (# of rows, some aggregates)
+    - [TODO]
+    What did you learn in the initial data exploration phase? How did you decide what features to use in your analysis? Description of any pre-processing steps you took
+    - learned that a lot of the data that i assumed to be complete and accessible wasn't actually
+        - ended up having to scrap most of the data from that stats online
+        - had to manually interact with riot api to write csvs for data that didn't exist
+    - ended up hindering my exploration and wasn't able to explore the problem as deeply as i wished that i could 
+
+Detailed description your models
+    Describe what kinds of statistical methods and machine learning algorithms you used
+    - clustering
+
+    How did you validate your models?
+    - external clustering validation; compare top/top players and ensure that most of same role are in the same cluster
+
+    What other models did you consider, and why didn't you proceed with those?
+    - considered filling in empty data with logistical regression, but ultimately didn't have time
+        - using averages was good enough for this purpose   
+    - entire exploration is about looking at differences in properties of data, so does not make sense to do much else
+
+    **Some suggested keywords are regression, classification, recommendations, cross-validation, overfitting, etc.
+
+What business applications do your findings have?
+- perhaps normal players could try to craft teams off of comparisons to pro-teams off of this
+- perhaps pro teams trying to fill the retiration of one member could use something like this to find a new member based on their overall stats
