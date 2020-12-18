@@ -41,13 +41,14 @@ def get_match_data(match_ids):
         request_url = 'https://kr.api.riotgames.com/lol/match/v4/matches/' + str(match_id) + '?api_key=' + api_key
         print(request_url)
         x = requests.get(request_url)
-        # if x.status_code == 429: # to go rapidfire...
-        #     print("429", ind)
-        #     sleep(125) # sleep for 2 minutes + 5 seconds in case
-        #     x = requests.get(request_url) # retry
+        if x.status_code == 429: # to go rapidfire...
+            # print("429", ind)
+            # time.sleep(125) # sleep for 2 minutes + 5 seconds in case
+            time.sleep(60) # sleep for 1 min bc my computer is slow lul
+            x = requests.get(request_url) # retry
 
         # but lets be a good boy and only make one request every second
-        time.sleep(1)
+        # time.sleep(1/2)
 
         print(json.dumps(x.json(), indent=2))
         result.append(x)
@@ -209,17 +210,30 @@ def flatten(data, participant):
         "10-20",
         "20-30",
     ]
-    metrics.update(select_properties(props, participant["timeline"]["creepsPerMinDeltas"], 'creepsPerMin'))
-    metrics.update(select_properties(props, participant["timeline"]["xpPerMinDeltas"], 'xpPerMin'))
-    metrics.update(select_properties(props, participant["timeline"]["goldPerMinDeltas"], 'goldPerMin'))
-    metrics.update(select_properties(props, participant["timeline"]["csDiffPerMinDeltas"], 'csDiffPerMin'))
-    metrics.update(select_properties(props, participant["timeline"]["xpDiffPerMinDeltas"], 'xpDiffPerMin_'))
-    metrics.update(select_properties(props, participant["timeline"]["damageTakenPerMinDeltas"], 'damageTakenPerMin_'))
-    metrics.update(select_properties(props, participant["timeline"]["damageTakenDiffPerMinDeltas"], 'damageTakenDiffPerMin_'))
+    participant_key = ["creepsPerMinDeltas", "xpPerMinDeltas", "goldPerMinDeltas", "xpDiffPerMinDeltas", "damageTakenPerMinsDeltas", "damageTakenDiffPerMinsDeltas"]
+    for key in participant_key: 
+        if key in participant["timeline"]:
+            metrics.update(select_properties(props, participant["timeline"][key], key))
+        else:
+            metrics.update({
+                key: {
+                    "0-10": "NaN",
+                    "10-20": "NaN",
+                    "20-30": "NaN",
+                }
+            })
+    # metrics.update(select_properties(props, participant["timeline"]["creepsPerMinDeltas"], 'creepsPerMin'))
+    # metrics.update(select_properties(props, participant["timeline"]["xpPerMinDeltas"], 'xpPerMin'))
+    # metrics.update(select_properties(props, participant["timeline"]["goldPerMinDeltas"], 'goldPerMin'))
+    # metrics.update(select_properties(props, participant["timeline"]["csDiffPerMinDeltas"], 'csDiffPerMin'))
+    # metrics.update(select_properties(props, participant["timeline"]["xpDiffPerMinDeltas"], 'xpDiffPerMin_'))
+    # metrics.update(select_properties(props, participant["timeline"]["damageTakenPerMinDeltas"], 'damageTakenPerMin_'))
+    # metrics.update(select_properties(props, participant["timeline"]["damageTakenDiffPerMinDeltas"], 'damageTakenDiffPerMin_'))
 
     return (qualt_stats, metrics)
 
-data = get_match_data(match_urls[0:5])
+# data = get_match_data(match_urls[0:5])
+data = get_match_data(match_urls)
 
 writeable = []
 for first_match in data:
@@ -236,6 +250,7 @@ for first_match in data:
     pj(flattened[0])
     pj(flattened[1])
 
+    flattened[1]["summonerName"] = flattened[0]["summonerName"] # port over for now otherwise no identification
     writeable.append(flattened[1])
 
 # put into csv
