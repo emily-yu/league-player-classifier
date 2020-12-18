@@ -80,18 +80,14 @@ def flatten(data, participant):
         if condition: 
             return true
         return true
-    def select_properties(quals, select_from):
+    def select_properties(quals, select_from, prefix=''):
         result = {}
         for item in quals: 
-            result[item] = select_from[item]
+            result[prefix+item] = select_from[item]
         return result
 
     stats = participant["stats"]
     props = [
-             "summonerName"
-             "championId",
-             "spell1Id", 
-             "spell2Id",
              "item0", 
              "item1", 
              "item2", 
@@ -126,11 +122,21 @@ def flatten(data, participant):
              "perkPrimaryStyle",
              "perkSubStyle",
              "statPerk1",
-             "statPerk2",
-             "role"
-             "lane"              
+             "statPerk2",            
              ]
     qualt_stats = select_properties(props, stats)
+    props = [
+        "summonerName",
+        "championId",
+        "spell1Id", 
+        "spell2Id",
+    ]
+    qualt_stats.update(select_properties(props, participant))
+    props = [
+        "role",
+        "lane"  
+    ]
+    qualt_stats.update(select_properties(props, participant["timeline"]))
 
     props = [
         "win", # bool
@@ -188,7 +194,21 @@ def flatten(data, participant):
         "firstInhibitorAssist",
     ]
     metrics = select_properties(props, stats)
-    # convert bools to 1 or 0
+
+    props = [
+        "0-10",
+        "10-20",
+        "20-30",
+    ]
+    metrics.update(select_properties(props, participant["timeline"]["creepsPerMinDeltas"], 'creepsPerMin'))
+    metrics.update(select_properties(props, participant["timeline"]["xpPerMinDeltas"], 'xpPerMin'))
+    metrics.update(select_properties(props, participant["timeline"]["goldPerMinDeltas"], 'goldPerMin'))
+    metrics.update(select_properties(props, participant["timeline"]["csDiffPerMinDeltas"], 'csDiffPerMin'))
+    metrics.update(select_properties(props, participant["timeline"]["xpDiffPerMinDeltas"], 'xpDiffPerMin_'))
+    metrics.update(select_properties(props, participant["timeline"]["damageTakenPerMinDeltas"], 'damageTakenPerMin_'))
+    metrics.update(select_properties(props, participant["timeline"]["damageTakenDiffPerMinDeltas"], 'damageTakenDiffPerMin_'))
+
+    # [TODO] convert bools to 1 or 0
     metrics["result"]: if_true(stats["win"] == True, 1, 0)
 
     return (qualt_stats, metrics)
