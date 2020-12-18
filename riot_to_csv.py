@@ -7,7 +7,7 @@ players = df['accountId'].unique()
 
 
 
-playerLimit = 5 # temporary - for testing
+playerLimit = 2 # temporary - for testing
 for player in players:
 
     # for testing
@@ -47,11 +47,14 @@ def get_match_data(match_ids):
             time.sleep(60) # sleep for 1 min bc my computer is slow lul
             x = requests.get(request_url) # retry
 
-        # but lets be a good boy and only make one request every second
-        # time.sleep(1/2)
+        if x.status_code == 504: 
+            print("unlucky")
+        else:
+            # but lets be a good boy and only make one request every second
+            # time.sleep(1/2)
 
-        print(json.dumps(x.json(), indent=2))
-        result.append(x)
+            print(json.dumps(x.json(), indent=2))
+            result.append(x)
     return result
         
 
@@ -216,11 +219,9 @@ def flatten(data, participant):
             metrics.update(select_properties(props, participant["timeline"][key], key))
         else:
             metrics.update({
-                key: {
-                    "0-10": "NaN",
-                    "10-20": "NaN",
-                    "20-30": "NaN",
-                }
+                key + "0-10": "NaN",
+                key + "10-20": "NaN",
+                key + "20-30": "NaN",
             })
     # metrics.update(select_properties(props, participant["timeline"]["creepsPerMinDeltas"], 'creepsPerMin'))
     # metrics.update(select_properties(props, participant["timeline"]["xpPerMinDeltas"], 'xpPerMin'))
@@ -241,6 +242,7 @@ for first_match in data:
     first_match = first_match.json()
 
     # [TODO]: change compile_participant_data to get all participant data
+    print(first_match)
     match_data = compile_participant_data(first_match)
     print(json.dumps(match_data, indent=2))
 
@@ -250,8 +252,13 @@ for first_match in data:
     pj(flattened[0])
     pj(flattened[1])
 
-    flattened[1]["summonerName"] = flattened[0]["summonerName"] # port over for now otherwise no identification
-    writeable.append(flattened[1])
+    base = {
+        "summonerName": flattened[0]["summonerName"]
+    }
+    base.update(flattened[1])
+    # flattened[1]["summonerName"] = flattened[0]["summonerName"] # port over for now otherwise no identification
+    # writeable.append(flattened[1])
+    writeable.append(base)
 
 # put into csv
 import csv
