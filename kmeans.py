@@ -133,11 +133,16 @@ def kmeans(N_CLUSTERS, df):
 
     clusters = [X_scaled[clusters == i] for i in range(N_CLUSTERS)]
     df = X_reduceddf
+
     # to have a look
     for i, c in enumerate(clusters):
         subdf = df[df['cluster'] == i]
         print('cluster ', i)
         print('number of players in cluster: ', len(subdf))
-        df_with_clusters = subdf.merge(avgs, how='left', left_index=True, right_index=True)
-        print(df_with_clusters) # <<< clusters to use
-        print(df_with_clusters.index.tolist())
+        # df_with_clusters = subdf.merge(avgs, how='left', left_index=True, right_index=True)
+        clusters[i] = subdf.merge(avgs, how='left', left_index=True, right_index=True)
+        print(clusters[i]) # <<< clusters to use
+        print(clusters[i].index.tolist())
+
+    return (clusters, X_reduceddf)
+    

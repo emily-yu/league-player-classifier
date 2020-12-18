@@ -16,7 +16,17 @@ N_CLUSTERS = 5
 df = pd.read_csv('write.csv')
 
 # perform kmeans
-kmeans(N_CLUSTERS, df)
+clusters, df_reduced = kmeans(N_CLUSTERS, df)
+
+print("............................................back to main file............................................")
+
+# to have a look
+for i, c in enumerate(clusters):
+    subdf = df_reduced[df_reduced['cluster'] == i]
+    print('cluster ', i)
+    print('number of players in cluster: ', len(subdf))
+    print(clusters[i]) # <<< clusters to use
+    print(clusters[i].columns)
 
 # ======= to consider to have some irrelevant graphs on pro players ========
 # for players that get dropped from roster: visualize how a player changes over time, what does their performance look like until they get dropped from the roster?
