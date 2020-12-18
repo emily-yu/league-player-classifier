@@ -290,4 +290,9 @@ for match in writeable:
 for match in writeableq:
     to_csv(match, 'write_qual.csv')
 
-# def process
+def process_champion_data(id):
+    x = requests.get('https://cdn.communitydragon.org/10.25.1/champion/' + str(id) + '/data')
+    return x.json()["name"]
+
+championName = process_champion_data(83)
+print(championName)
