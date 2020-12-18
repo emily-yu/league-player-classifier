@@ -17,13 +17,14 @@ import pickle
 # data3
 
 print("helo")
+N_CLUSTERS = 5
 
 # import xlrd
 # !pip install xlrd
 import pandas as pd
 
 # df = pd.read_excel('league_pro_matches_data/2019-spring-match-data-OraclesElixir-2019-05-21.xlsx')
-df = pd.read_csv('write.csv')
+df = pd.read_csv('oldwriteto.csv')
 # df
 
 # analyze per roles, since each role is played differently / has different goals and purpose within game
@@ -331,7 +332,7 @@ print(df_X_scaled)
 # print(df_X_scaled.head())
 
 # create and fit data for model
-kmeans = KMeans(init='random', n_clusters=3, n_init=10)
+kmeans = KMeans(init='random', n_clusters=N_CLUSTERS, n_init=10)
 kmeans.fit(X_scaled)
 
 # Determine which clusters each data point belongs to:
@@ -380,13 +381,13 @@ display_factorial_planes(X_reduced, 2, pca, [(0,1)], illustrative_var = clusters
 plt.scatter(centres_reduced[:, 0], centres_reduced[:, 1],
             marker='x', s=169, linewidths=3,
             color='k', zorder=10)
+plt.show()
 
 # USAGE AGAINST A NORMAL PLAYER [TODO]
 # select columns of data to be compared (data existing for the pro player data set)
 # calculate cosine_similarity between PLAYER and all other PRO player aggregate stats in their role
 # select the most similar / greatest cosine_similarity value and claim that that is the most similar PRO player
 
-N_CLUSTERS = 3
 clusters = [X_scaled[clusters == i] for i in range(N_CLUSTERS)]
 df = X_reduceddf
 # to have a look
