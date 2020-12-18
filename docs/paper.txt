@@ -1,9 +1,21 @@
 Description of problem and hypothesis 
     - interested in how challenjour players compare in comparison to pro players
 
+    - how do player stats in game adhere to the meta?
+    - do pro players adhere to the meta as much as challenger players do?
+    - how does gameplay across different roles compare?
+
+    i expect to see that meta does exist, as there is a general consensus that it does exist. i also expect to see a clear divide between roles because 
+    of the different roles that each player abides to, with more variation in pro play as their teamwork should generally be more solid in comparison to 
+    players who aren't always 5-manning together, seamless, whatever teamwork yes which allows them to deviate out of the norm to outplay others. but, the
+    way that i'm thinking could just be as a low-elo player, and challenger players are just as capable of executing a solid teamwork formation as pros. 
+    who knows buddy. 
+
 Detailed description your data set
     - found on kaggle, used to extract all the pro games
     - found on kaggle, used to extract all the challenjour games
+
+    from the extraction of gameids, i ran it through rito's api and had to manually create the csvs to be processed into stats. 
 
 Description of your dataset and how it was obtained 
     Some basic statistics (# of rows, some aggregates)
@@ -17,7 +29,8 @@ Description of your dataset and how it was obtained
 Detailed description your models
     Describe what kinds of statistical methods and machine learning algorithms you used
     - clustering
-    - try knn after this? maybe it'll be better for assigning idk who knows
+    - probably should have used knn, if i wanted to do what i actually wanted to do and classify players but. for the purposes of what i decided 
+    on looking for this time i guess this kinda works lul
 
     How did you validate your models?
     - external clustering validation; compare top/top players and ensure that most of same role are in the same cluster
