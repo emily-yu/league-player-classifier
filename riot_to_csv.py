@@ -219,7 +219,7 @@ def flatten(data, participant):
 
     return (qualt_stats, metrics)
 
-data = get_match_data(match_urls[0:2])
+data = get_match_data(match_urls[0:5])
 
 writeable = []
 for first_match in data:
