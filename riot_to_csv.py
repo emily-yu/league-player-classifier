@@ -241,7 +241,7 @@ def flatten(data, participant):
 
     return (qualt_stats, metrics)
 
-data = get_match_data(match_urls[0:1000])
+data = get_match_data(match_urls[0:10000])
 # data = get_match_data(match_urls[0:10])
 # data = get_match_data(match_urls)
 
@@ -287,7 +287,7 @@ with open('write_quant.csv', 'w') as f:  # Just use 'w' mode in 3.x
     w = csv.DictWriter(f, writeable[0].keys())
     w.writeheader()
 with open('write_qual.csv', 'w') as f:  # Just use 'w' mode in 3.x
-    w = csv.DictWriter(f, writeable[0].keys())
+    w = csv.DictWriter(f, writeableq[0].keys())
     w.writeheader()
 
 ### write data
