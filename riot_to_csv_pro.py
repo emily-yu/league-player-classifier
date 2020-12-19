@@ -45,44 +45,62 @@ api_key = input("API KEY: ")
 def get_player_matches(name):
     request_url = 'https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/' + name + '?api_key=' + api_key
     x = requests.get(request_url)
-    return x.json()['accountId']
+    if x.status_code == 200:
+        return x.json()['accountId']
+    return None
 
 accountId = get_player_matches('Bwipo')
 print(accountId)
 
+def get_matchlist(accountId):
+    request_url = 'https://euw1.api.riotgames.com/lol/match/v4/matchlists/by-account/' + accountId + '?api_key=' + api_key
+    x = requests.get(request_url)
+    if x.status_code == 200:
+        x = x.json()
+    else:
+        return None
 
-# import time
-# # automate pulling match data from matchURL
-# # match_urls = [3706043050]
-# def get_match_data(match_ids):
-#     result = []
-#     for match_id in match_ids:
-#         request_url = 'https://euw1.api.riotgames.com/lol/match/v4/matches/' + str(match_id) + '?api_key=' + api_key
-#         print(request_url)
-#         x = requests.get(request_url)
-#         print(x.status_code)
-#         while x.status_code == 429: # to go rapidfire...
-#             # print("429", ind)
-#             # time.sleep(125) # sleep for 2 minutes + 5 seconds in case
-#             # time.sleep(60) # sleep for 1 min bc my computer is slow lul
-#             print("headers:", x.headers)
-#             time.sleep(float(x.headers['Retry-After']))
-#             x = requests.get(request_url) # retry
+    result = []
+    MAX_MATCHES = 15
+    for match in x['matches']:
+        if len(result) == MAX_MATCHES: # cap it at 15, don't wanna overload api (and my brain)
+            return result
 
-#         # if x.status_code == 504: 
-#         #     print("unlucky")
-#         if x.status_code == 200:
-#             # but lets be a good boy and only make one request every second
-#             # time.sleep(1/2)
+        # [TODO] only filter timestamps during touranment time (ex. lck, lpl)
+        region = match['platformId']
+        game_id = match['gameId']
+        result.append((region, game_id))
+    
+    return result
 
-#             # print(json.dumps(x.json(), indent=2))
-#             result.append(x)
-#             print(len(result))
-#         else:
-#             pass
+matchlist = get_matchlist(accountId)
+print(matchlist)
 
-#     return result
+# automate pulling match data from matchURL
+import time
+def get_match_data(match_ids):
+    result = []
+    for region, match_id in matchlist:
+        request_url = 'https://' + region + '.api.riotgames.com/lol/match/v4/matches/' + str(match_id) + '?api_key=' + api_key
+        print(request_url)
+        x = requests.get(request_url)
         
+        while x.status_code == 429: # to go rapidfire...
+            print("headers:", x.headers)
+            time.sleep(float(x.headers['Retry-After']))
+            x = requests.get(request_url) # retry
+
+        # only put in good results
+        if x.status_code == 200:
+            result.append(x)
+            print(len(result))
+        else:
+            pass
+
+    return result
+    
+data = get_match_data(matchlist)
+print(data)
 
 # # pull together different parts of the request
 # # pull participant username to main stats
