@@ -1,11 +1,20 @@
 import pandas as pd
-
+import xlrd
 
 
 # df = pd.read_csv('data/.csv')
-df = pd.read_excel('league_pro_matches_data/2019-spring-match-data-OraclesElixir-2019-05-21.xlsx')
-match_urls = df['gameid'].unique()
-print(match_urls)
+# df = pd.read_excel('league_pro_matches_data/2019-spring-match-data-OraclesElixir-2019-05-21.xlsx')
+df = pd.read_csv('league_pro_matches_data/2019-spring-match.csv')
+players_to_follow = df['player'].unique()
+
+# manually map everything holy moly
+server_mappings = {
+    'Fnatic': 'eu1'
+}
+
+# match_urls = df['gameid'].unique()
+# match_urls = [i for i in match_urls if len(str(i)) <= 7] # filter out bad gameids
+# print(match_urls)
 
 
 # playerLimit = 10 # temporary - for testing
@@ -26,12 +35,20 @@ print(match_urls)
 
 
 
-# import requests
-# import json
-# ## create script to automate riot api sample requests and fill in csv
-# api_key = input("API KEY: ")
+import requests
+import json
+## create script to automate riot api sample requests and fill in csv
+api_key = input("API KEY: ")
 
 
+### for each player, get their accountId
+def get_player_matches(name):
+    request_url = 'https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/' + name + '?api_key=' + api_key
+    x = requests.get(request_url)
+    return x.json()['accountId']
+
+accountId = get_player_matches('Bwipo')
+print(accountId)
 
 
 # import time
@@ -40,7 +57,7 @@ print(match_urls)
 # def get_match_data(match_ids):
 #     result = []
 #     for match_id in match_ids:
-#         request_url = 'https://kr.api.riotgames.com/lol/match/v4/matches/' + str(match_id) + '?api_key=' + api_key
+#         request_url = 'https://euw1.api.riotgames.com/lol/match/v4/matches/' + str(match_id) + '?api_key=' + api_key
 #         print(request_url)
 #         x = requests.get(request_url)
 #         print(x.status_code)
@@ -242,9 +259,9 @@ print(match_urls)
 
 #     return (qualt_stats, metrics)
 
-# # data = get_match_data(match_urls[0:10000])
+# data = get_match_data(match_urls[0:10000])
 # data = get_match_data(match_urls[0:10])
-# # data = get_match_data(match_urls)
+# data = get_match_data(match_urls)
 
 # writeable = []
 # writeableq = [] # qualitative values (not used for clustering)
