@@ -287,12 +287,51 @@ with open('write_qual.csv', 'w') as f:  # Just use 'w' mode in 3.x
 for match in writeable:
     to_csv(match, 'write_quant.csv')
 
-for match in writeableq:
-    to_csv(match, 'write_qual.csv')
 
+
+
+### write qualitative data
+
+# conversions for qualitative data (ids in riot system) to filtering
 def process_champion_data(id):
     x = requests.get('https://cdn.communitydragon.org/10.25.1/champion/' + str(id) + '/data')
     return x.json()["name"]
 
 championName = process_champion_data(83)
-print(championName)
+# print(championName)
+
+def process_item_data(item_number):
+    f = open('cdragon_en_US/item.json') 
+    items = json.load(f)
+    item_number = 3153
+    return items["data"][str(item_number)]
+
+itemName = process_item_data(3153)["name"]
+# print(itemName)
+
+def process_perk_data(perkData): # [perk1, perk1Var1, perk1Var2, perk1Var3]
+    # edge case
+    if perkData == 0:
+        return ""
+
+    f = open('cdragon_en_US/runesReforged.json') 
+    runes = json.load(f)
+    # flatten
+    flattened = []
+    print("flatten")
+    print(json.dumps(runes, indent=2))
+    for i in range(len(runes)):
+        for elem in runes[i]["slots"]: 
+            flattened += elem["runes"]
+
+    print(json.dumps(flattened, indent=2))
+    result = next((x for x in flattened if x["id"] == perkData), None)
+    print(result)  
+    return result["key"]
+
+perkName = process_perk_data(8237)
+print(perkName)
+
+# perform write operation
+for match in writeableq:
+    to_csv(match, 'write_qual.csv')
