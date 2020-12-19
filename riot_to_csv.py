@@ -1,6 +1,7 @@
 import pandas as pd
 import requests
 import json
+import time
 
 df = pd.read_csv('data/challenger_match_V2.csv')
 games = df['gameId'].unique()
