@@ -24,7 +24,7 @@ def get_matchlist(accountId):
 
     result = []
     # MAX_MATCHES = 15
-    MAX_MATCHES = 5
+    MAX_MATCHES = 2
     for match in x['matches']:
         if len(result) == MAX_MATCHES: # cap it at 15, don't wanna overload api (and my brain)
             return result
@@ -289,9 +289,9 @@ def write_summoner_to_csv(summonerName, has_headers):
             w = csv.DictWriter(f, writeableq[0].keys())
             w.writeheader()
 
-        ### write data
-        for match in writeable:
-            to_csv(match, 'write_quant_pro.csv')
+    ### write data
+    for match in writeable:
+        to_csv(match, 'write_quant_pro.csv')
 
 
 
