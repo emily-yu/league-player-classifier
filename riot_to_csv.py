@@ -253,13 +253,13 @@ for first_match in data:
 
     # [TODO]: change compile_participant_data to get all participant data
     match_data = compile_participant_data(first_match)
-    print(json.dumps(match_data, indent=2))
+    # print(json.dumps(match_data, indent=2))
 
     flattened = flatten(first_match, match_data)
     def pj(inp):
         print(json.dumps(inp, indent=2))
-    pj(flattened[0])
-    pj(flattened[1])
+    # pj(flattened[0])
+    # pj(flattened[1])
 
     base = {
         "summonerName": flattened[0]["summonerName"]
