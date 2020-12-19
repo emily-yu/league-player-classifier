@@ -42,20 +42,25 @@ def get_match_data(match_ids):
         request_url = 'https://kr.api.riotgames.com/lol/match/v4/matches/' + str(match_id) + '?api_key=' + api_key
         print(request_url)
         x = requests.get(request_url)
-        if x.status_code == 429: # to go rapidfire...
+        while x.status_code == 429: # to go rapidfire...
             # print("429", ind)
-            time.sleep(125) # sleep for 2 minutes + 5 seconds in case
+            # time.sleep(125) # sleep for 2 minutes + 5 seconds in case
             # time.sleep(60) # sleep for 1 min bc my computer is slow lul
+            print("headers:", x.headers)
+            time.sleep(float(x.headers['Retry-After']))
             x = requests.get(request_url) # retry
 
-        if x.status_code == 504: 
-            print("unlucky")
-        else:
+        # if x.status_code == 504: 
+        #     print("unlucky")
+        if x.status_code == 404:
             # but lets be a good boy and only make one request every second
             # time.sleep(1/2)
 
-            print(json.dumps(x.json(), indent=2))
+            # print(json.dumps(x.json(), indent=2))
             result.append(x)
+        else:
+            pass
+            
     return result
         
 
@@ -234,8 +239,9 @@ def flatten(data, participant):
 
     return (qualt_stats, metrics)
 
-# data = get_match_data(match_urls[0:5])
-data = get_match_data(match_urls)
+data = get_match_data(match_urls[0:1000])
+# data = get_match_data(match_urls[0:1])
+# data = get_match_data(match_urls)
 
 writeable = []
 for first_match in data:
