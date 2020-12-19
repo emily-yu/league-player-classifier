@@ -253,17 +253,17 @@ for first_match in data:
 
     # [TODO]: change compile_participant_data to get all participant data
     match_data = compile_participant_data(first_match)
-    print(json.dumps(match_data, indent=2))
+    # print(json.dumps(match_data, indent=2))
 
     flattened = flatten(first_match, match_data)
     def pj(inp):
         print(json.dumps(inp, indent=2))
-    pj(flattened[0])
-    pj(flattened[1])
+    # pj(flattened[0])
+    # pj(flattened[1])
 
     base = {
         "summonerName": flattened[0]["summonerName"]
-    }
+    } 
     base.update(flattened[1])
     # flattened[1]["summonerName"] = flattened[0]["summonerName"] # port over for now otherwise no identification
     # writeable.append(flattened[1])
@@ -329,13 +329,13 @@ def process_perk_data(perkData): # [perk1, perk1Var1, perk1Var2, perk1Var3]
     runes = json.load(f)
     # flatten
     flattened = []
-    print("flatten")
-    print(json.dumps(runes, indent=2))
+    # print("flatten")
+    # print(json.dumps(runes, indent=2))
     for i in range(len(runes)):
         for elem in runes[i]["slots"]: 
             flattened += elem["runes"]
 
-    print(json.dumps(flattened, indent=2))
+    # print(json.dumps(flattened, indent=2))
     result = next((x for x in flattened if x["id"] == perkData), None)
 
     # catch nonexistent lul
@@ -362,8 +362,8 @@ def process_spell_data(spell_id):
     
     return result["name"]
 
-spellName = process_spell_data(12)
-print(spellName)
+# spellName = process_spell_data(12)
+# print(spellName)
 
 # replace item names
 for match in writeableq:
