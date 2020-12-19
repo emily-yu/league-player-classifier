@@ -13,7 +13,8 @@ from kmeans import kmeans
 N_CLUSTERS = 5
 
 # df = pd.read_csv('oldwriteto.csv')
-df = pd.read_csv('write.csv')
+# df = pd.read_csv('write.csv')
+df = pd.read_csv('write_quant.csv')
 
 # perform kmeans
 clusters, df_reduced = kmeans(N_CLUSTERS, df)

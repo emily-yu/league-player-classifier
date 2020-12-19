@@ -42,6 +42,7 @@ def get_match_data(match_ids):
         request_url = 'https://kr.api.riotgames.com/lol/match/v4/matches/' + str(match_id) + '?api_key=' + api_key
         print(request_url)
         x = requests.get(request_url)
+        print(x.status_code)
         while x.status_code == 429: # to go rapidfire...
             # print("429", ind)
             # time.sleep(125) # sleep for 2 minutes + 5 seconds in case
@@ -52,7 +53,7 @@ def get_match_data(match_ids):
 
         # if x.status_code == 504: 
         #     print("unlucky")
-        if x.status_code == 404:
+        if x.status_code == 200:
             # but lets be a good boy and only make one request every second
             # time.sleep(1/2)
 
@@ -239,8 +240,8 @@ def flatten(data, participant):
 
     return (qualt_stats, metrics)
 
-data = get_match_data(match_urls[0:1000])
-# data = get_match_data(match_urls[0:1])
+# data = get_match_data(match_urls[0:1000])
+data = get_match_data(match_urls[0:10])
 # data = get_match_data(match_urls)
 
 writeable = []
@@ -250,7 +251,6 @@ for first_match in data:
     first_match = first_match.json()
 
     # [TODO]: change compile_participant_data to get all participant data
-    print(first_match)
     match_data = compile_participant_data(first_match)
     print(json.dumps(match_data, indent=2))
 
@@ -283,10 +283,10 @@ def to_csv(row, filepath):
 
 ### write header
 with open('write_quant.csv', 'w') as f:  # Just use 'w' mode in 3.x
-    w = csv.DictWriter(f, flattened[1].keys())
+    w = csv.DictWriter(f, writeable[0].keys())
     w.writeheader()
 with open('write_qual.csv', 'w') as f:  # Just use 'w' mode in 3.x
-    w = csv.DictWriter(f, flattened[0].keys())
+    w = csv.DictWriter(f, writeable[0].keys())
     w.writeheader()
 
 ### write data
@@ -401,7 +401,6 @@ for match in writeableq:
         spell_id = props[key]
         match[spell_id] = process_spell_data(match[spell_id])
 
-print(writeableq)
 # perform write operation
 for match in writeableq:
     to_csv(match, 'write_qual.csv')
