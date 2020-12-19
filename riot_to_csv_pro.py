@@ -1,45 +1,7 @@
 import pandas as pd
 import xlrd
-
-
-# df = pd.read_csv('data/.csv')
-# df = pd.read_excel('league_pro_matches_data/2019-spring-match-data-OraclesElixir-2019-05-21.xlsx')
-df = pd.read_csv('league_pro_matches_data/2019-spring-match.csv')
-players_to_follow = df['player'].unique()
-
-# manually map everything holy moly
-server_mappings = {
-    'Fnatic': 'eu1'
-}
-
-# match_urls = df['gameid'].unique()
-# match_urls = [i for i in match_urls if len(str(i)) <= 7] # filter out bad gameids
-# print(match_urls)
-
-
-# playerLimit = 10 # temporary - for testing
-# match_urls = []
-# for player in players:
-
-#     # # for testing
-#     # playerLimit -= 1
-#     # if playerLimit == 0: break
-
-#     player_games = df[df['accountId'] == player]
-#     player_games = player_games.drop(columns=['accountId'])
-#     print(player)
-#     print(player_games['gameId'].to_list())
-
-#     match_urls += player_games['gameId'].to_list() #for testing bottom function
-
-
-
-
 import requests
 import json
-## create script to automate riot api sample requests and fill in csv
-api_key = input("API KEY: ")
-
 
 ### for each player, get their accountId
 def get_player_matches(name):
@@ -48,10 +10,6 @@ def get_player_matches(name):
     if x.status_code == 200:
         return x.json()['accountId']
     return None
-
-summonerName = 'Bwipo'
-accountId = get_player_matches(summonerName)
-print(accountId)
 
 def get_matchlist(accountId):
     request_url = 'https://euw1.api.riotgames.com/lol/match/v4/matchlists/by-account/' + accountId + '?api_key=' + api_key
@@ -75,9 +33,6 @@ def get_matchlist(accountId):
     
     return result
 
-matchlist = get_matchlist(accountId)
-print(matchlist)
-
 # automate pulling match data from matchURL
 import time
 def get_match_data(match_ids):
@@ -100,9 +55,6 @@ def get_match_data(match_ids):
             pass
 
     return result
-    
-data = get_match_data(matchlist)
-print(data)
 
 # pull together different parts of the request
 # pull participant username to main stats
@@ -111,21 +63,15 @@ def compile_participant_data(request, summonerName):
     participant_detail = request["participants"]
     
     # participant_mapping for SELF ONLY
-    # mapping = next(item for item in participant_mapping if item["player"]["accountId"] == item["player"]["currentAccountId"])
     mapping = next(item for item in participant_mapping if item["player"]["summonerName"] == summonerName)
     id = mapping["participantId"]
     p_data = next(item for item in participant_detail if item["participantId"] == id)
     p_data["summonerName"] = mapping["player"]["summonerName"]
-    print("MAPPING", p_data["summonerName"])
-    # print(json.dumps(p_data, indent=2)) # full data
 
     return p_data
 
 # flatten into stats we can use
 def flatten(data, participant):
-    # print(json.dumps(data, indent=2))
-    # print(json.dumps(participant, indent=2))
-
     # utility
     def if_true(condition, true, false=None):
         if condition: 
@@ -270,87 +216,59 @@ def flatten(data, participant):
                 key + "10-20": "NaN",
                 key + "20-30": "NaN",
             })
-    # metrics.update(select_properties(props, participant["timeline"]["creepsPerMinDeltas"], 'creepsPerMin'))
-    # metrics.update(select_properties(props, participant["timeline"]["xpPerMinDeltas"], 'xpPerMin'))
-    # metrics.update(select_properties(props, participant["timeline"]["goldPerMinDeltas"], 'goldPerMin'))
-    # metrics.update(select_properties(props, participant["timeline"]["csDiffPerMinDeltas"], 'csDiffPerMin'))
-    # metrics.update(select_properties(props, participant["timeline"]["xpDiffPerMinDeltas"], 'xpDiffPerMin_'))
-    # metrics.update(select_properties(props, participant["timeline"]["damageTakenPerMinDeltas"], 'damageTakenPerMin_'))
-    # metrics.update(select_properties(props, participant["timeline"]["damageTakenDiffPerMinDeltas"], 'damageTakenDiffPerMin_'))
 
     return (qualt_stats, metrics)
+
 def pj(inp):
     print(json.dumps(inp, indent=2))
+
+#####################################################################################################################################################################################
+
+df = pd.read_csv('league_pro_matches_data/2019-spring-match.csv')
+players_to_follow = df['player'].unique()
+
+# manually map everything holy moly
+server_mappings = {
+    'Fnatic': 'eu1'
+}
+
+# create script to automate riot api sample requests and fill in csv
+api_key = input("API KEY: ")
+
+summonerName = 'Bwipo'
+accountId = get_player_matches(summonerName)
+# print(accountId)
+
+matchlist = get_matchlist(accountId)
+# print(matchlist)
+
+data = get_match_data(matchlist)
+# print(data)
+
 writeable = []
 writeableq = [] # qualitative values (not used for clustering)
-print("start")
+
 for first_match in data:
-# first_match = data[0].json()
     first_match = first_match.json()
-    pj(first_match)
-    # print(first_match.json())
     match_data = compile_participant_data(first_match, summonerName)
-    # match_data = compile_participant_data(first_match)
-    # print(participant)
-    # participant = participant.json()
-    # match_data = compile_participant_data(participant)
-    print(json.dumps(match_data, indent=2))
-
-    # flattened = flatten(participant, match_data)
     flattened = flatten(first_match, match_data)
-    # pj(flattened[0])
-    # pj(flattened[1])
 
+    # write quant data
     base = {
         "summonerName": flattened[0]["summonerName"]
     } 
     base.update(flattened[1])
-    # flattened[1]["summonerName"] = flattened[0]["summonerName"] # port over for now otherwise no identification
-    # writeable.append(flattened[1])
     writeable.append(base)
 
+    # write qual data
     base = {
         "summonerName": flattened[0]["summonerName"]
     }
     base.update(flattened[0])
     writeableq.append(base)
 
-print(writeable)
-print(writeableq)
-
-# data = get_match_data(match_urls[0:10000])
-# data = get_match_data(match_urls[0:10])
-# data = get_match_data(match_urls)
-
-# writeable = []
-# writeableq = [] # qualitative values (not used for clustering)
-# for first_match in data:
-# # first_match = data[0].json()
-#     first_match = first_match.json()
-
-#     # [TODO]: change compile_participant_data to get all participant data
-#     match_data = compile_participant_data(first_match)
-#     # print(json.dumps(match_data, indent=2))
-
-#     flattened = flatten(first_match, match_data)
-#     def pj(inp):
-#         print(json.dumps(inp, indent=2))
-#     # pj(flattened[0])
-#     # pj(flattened[1])
-
-#     base = {
-#         "summonerName": flattened[0]["summonerName"]
-#     } 
-#     base.update(flattened[1])
-#     # flattened[1]["summonerName"] = flattened[0]["summonerName"] # port over for now otherwise no identification
-#     # writeable.append(flattened[1])
-#     writeable.append(base)
-
-#     base = {
-#         "summonerName": flattened[0]["summonerName"]
-#     }
-#     base.update(flattened[0])
-#     writeableq.append(base)
+# print(writeable)
+# print(writeableq)
 
 # put into csv
 import csv
