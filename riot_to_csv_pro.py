@@ -12,6 +12,9 @@ def get_player_matches(name):
     return None
 
 def get_matchlist(accountId):
+    if accountId is None:
+        return None
+        
     request_url = 'https://euw1.api.riotgames.com/lol/match/v4/matchlists/by-account/' + accountId + '?api_key=' + api_key
     x = requests.get(request_url)
     if x.status_code == 200:
@@ -233,6 +236,8 @@ def pj(inp):
 def write_summoner_to_csv(summonerName, has_headers):
     accountId = get_player_matches(summonerName)
     # print(accountId)
+    if accountId is None:
+        return
 
     matchlist = get_matchlist(accountId)
     # print(matchlist)
@@ -364,6 +369,8 @@ def write_summoner_to_csv(summonerName, has_headers):
         props = ['item0', 'item1', 'item2', 'item3', 'item4', 'item5', 'item6']
         for key in range(len(props)):
             item_id = props[key]
+            if item_id not in match:
+                continue
             match[item_id] = process_item_data(match[item_id])
         
         props = [
@@ -379,6 +386,8 @@ def write_summoner_to_csv(summonerName, has_headers):
             ]
         for key in range(len(props)):
             perk_id = props[key]
+            if perk_id not in match:
+                continue
             match[perk_id] = process_perk_data(match[perk_id])
 
         props = [
@@ -386,6 +395,8 @@ def write_summoner_to_csv(summonerName, has_headers):
         ]
         for key in range(len(props)):
             champ_id = props[key]
+            if champ_id not in match:
+                continue
             match[champ_id] = process_champion_data(match[champ_id])
 
         props = [
@@ -394,6 +405,8 @@ def write_summoner_to_csv(summonerName, has_headers):
         ]
         for key in range(len(props)):
             spell_id = props[key]
+            if spell_id not in match:
+                continue
             match[spell_id] = process_spell_data(match[spell_id])
 
     # perform write operation
