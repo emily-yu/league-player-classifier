@@ -7,7 +7,8 @@ df = pd.read_csv('data/challenger_match_V2.csv')
 games = df['gameId'].unique()
 ind = 0
 
-PLAYER_LIMIT = 20
+# PLAYER_LIMIT = 20
+PLAYER_LIMIT = 1200
 players_to_follow = []
 region = 'kr'
 
@@ -67,7 +68,7 @@ def get_matchlist(accountId):
 
     result = []
     # MAX_MATCHES = 15
-    MAX_MATCHES = 2
+    MAX_MATCHES = 10
     for match in x['matches']:
         if len(result) == MAX_MATCHES: # cap it at 15, don't wanna overload api (and my brain)
             return result

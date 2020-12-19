@@ -24,7 +24,7 @@ def get_matchlist(accountId):
 
     result = []
     # MAX_MATCHES = 15
-    MAX_MATCHES = 2
+    MAX_MATCHES = 10
     for match in x['matches']:
         if len(result) == MAX_MATCHES: # cap it at 15, don't wanna overload api (and my brain)
             return result
