@@ -297,7 +297,7 @@ def process_champion_data(id):
     x = requests.get('https://cdn.communitydragon.org/10.25.1/champion/' + str(id) + '/data')
     return x.json()["name"]
 
-championName = process_champion_data(83)
+# championName = process_champion_data(83)
 # print(championName)
 
 def process_item_data(item_number):
@@ -310,7 +310,7 @@ def process_item_data(item_number):
 
     return items["data"][str(item_number)]["name"]
 
-itemName = process_item_data(3153)
+# itemName = process_item_data(3153)
 # print(itemName)
 
 def process_perk_data(perkData): # [perk1, perk1Var1, perk1Var2, perk1Var3]
@@ -337,11 +337,26 @@ def process_perk_data(perkData): # [perk1, perk1Var1, perk1Var2, perk1Var3]
 
     return result["key"]
 
-perkName = process_perk_data(8237)
-print(perkName)
+# perkName = process_perk_data(8237)
+# print(perkName)
 
 def process_spell_data(spell_id):
-    pass
+    f = open('cdragon_en_US/summoner.json') 
+    summoner_metadata = json.load(f)
+    # flatten
+    flattened = []
+    # print("flatten")
+    # print(json.dumps(summoner_metadata["data"], indent=2))
+    result = next((summoner_metadata["data"][i] for i in summoner_metadata["data"] if summoner_metadata["data"][i]["key"] == str(spell_id)), None)
+    # print('result', result)
+
+    if result is None:
+        return 'NaN'
+    
+    return result["name"]
+
+spellName = process_spell_data(12)
+print(spellName)
 
 # replace item names
 for match in writeableq:
@@ -372,13 +387,13 @@ for match in writeableq:
         champ_id = props[key]
         match[champ_id] = process_champion_data(match[champ_id])
 
-    # props = [
-    #     'spell1Id',
-    #     'spell2Id'
-    # ]
-    # for key in range(len(props)):
-    #     spell_id = props[key]
-    #     match[spell_id] = process_spell_data(match[spell_id])
+    props = [
+        'spell1Id',
+        'spell2Id'
+    ]
+    for key in range(len(props)):
+        spell_id = props[key]
+        match[spell_id] = process_spell_data(match[spell_id])
 
 print(writeableq)
 # perform write operation
