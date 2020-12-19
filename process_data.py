@@ -14,21 +14,18 @@ N_CLUSTERS = 5
 
 # df = pd.read_csv('oldwriteto.csv')
 # df = pd.read_csv('write.csv')
-df = pd.read_csv('write_quant.csv')
-
-# perform kmeans
-clusters, df_reduced = kmeans(N_CLUSTERS, df)
-
-print("............................................back to main file............................................")
+df_quant = pd.read_csv('write_quant.csv')
 df_qual = pd.read_csv('write_qual.csv')
 
-# to have a look
+# perform kmeans
+clusters = kmeans(N_CLUSTERS, df_quant, df_qual)
+
+print("............................................back to main file............................................")
+
+# to have a look @ cluster data (with both qual and quant data)
 for i, c in enumerate(clusters):
     print('cluster ', i, 'number of players in cluster: ', len(clusters[i]))
 
-    # merge cluster on qualitative values
-    # use for recommender
-    dfinal = clusters[i].merge(df_qual, on="summonerName", how = 'outer')
 
 # ======= to consider to have some irrelevant graphs on pro players ========
 # for players that get dropped from roster: visualize how a player changes over time, what does their performance look like until they get dropped from the roster?

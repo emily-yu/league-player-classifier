@@ -6,9 +6,9 @@ import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
-def kmeans(N_CLUSTERS, df):
+def kmeans(N_CLUSTERS, df_quant, df_qual):
     ##### > average out data of each pro player for kmeans
-    avgs = df.groupby('summonerName').mean()
+    avgs = df_quant.groupby('summonerName').mean()
     print(avgs.columns)
     print("avgs")
     print(avgs)
@@ -141,8 +141,14 @@ def kmeans(N_CLUSTERS, df):
         print('number of players in cluster: ', len(subdf))
         # df_with_clusters = subdf.merge(avgs, how='left', left_index=True, right_index=True)
         clusters[i] = subdf.merge(avgs, how='left', left_index=True, right_index=True)
-        print(clusters[i]) # <<< clusters to use
-        print(clusters[i].index.tolist())
 
-    return (clusters, X_reduceddf)
+        # merge cluster on qualitative values
+        # use for recommender
+        clusters[i] = clusters[i].merge(df_qual, on="summonerName", how = 'left')
+
+        print(clusters[i]) # <<< clusters to use
+        # print(clusters[i].index.tolist())
+
+    # return (clusters, X_reduceddf)
+    return clusters
     
