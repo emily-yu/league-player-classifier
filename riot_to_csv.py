@@ -303,10 +303,14 @@ championName = process_champion_data(83)
 def process_item_data(item_number):
     f = open('cdragon_en_US/item.json') 
     items = json.load(f)
-    item_number = 3153
-    return items["data"][str(item_number)]
 
-itemName = process_item_data(3153)["name"]
+    # catch nonexistent lul
+    if str(item_number) not in items["data"]: 
+        return "NaN"
+
+    return items["data"][str(item_number)]["name"]
+
+itemName = process_item_data(3153)
 # print(itemName)
 
 def process_perk_data(perkData): # [perk1, perk1Var1, perk1Var2, perk1Var3]
@@ -332,6 +336,14 @@ def process_perk_data(perkData): # [perk1, perk1Var1, perk1Var2, perk1Var3]
 perkName = process_perk_data(8237)
 print(perkName)
 
+# replace item names
+for match in writeableq:
+    props = ['item0', 'item1', 'item2', 'item3', 'item4', 'item5', 'item6']
+    for key in range(len(props)):
+        item_id = props[key]
+        match[item_id] = process_item_data(match[item_id])
+
+print(writeableq)
 # perform write operation
 for match in writeableq:
     to_csv(match, 'write_qual.csv')
