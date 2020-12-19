@@ -59,6 +59,7 @@ def get_match_data(match_ids):
 
             # print(json.dumps(x.json(), indent=2))
             result.append(x)
+            print(len(result))
         else:
             pass
 
