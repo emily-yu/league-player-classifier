@@ -6,7 +6,7 @@ df = pd.read_csv('data/challenger_match_V2.csv')
 games = df['gameId'].unique()
 ind = 0
 
-PLAYER_LIMIT = 5
+PLAYER_LIMIT = 20
 players_to_follow = []
 region = 'kr'
 
@@ -15,14 +15,24 @@ api_key = input("API KEY: ")
 while (len(players_to_follow) < PLAYER_LIMIT):
     request_url = 'https://' + region + '.api.riotgames.com/lol/match/v4/matches/' + str(games[ind]) + '?api_key=' + api_key
     x = requests.get(request_url)
+    print(x.status_code)
+    while x.status_code == 429: # to go rapidfire...
+        time.sleep(float(x.headers['Retry-After']))
+        x = requests.get(request_url) # retry
+
+    # only put in good results
     if x.status_code == 200:
         x = x.json()
+        print(len(players_to_follow))
         for obj in x["participantIdentities"]:
             summonerName = obj["player"]["summonerName"]
-            players_to_follow.append(summonerName)
+            print(summonerName)
+            if summonerName not in players_to_follow: 
+                players_to_follow.append(summonerName)
     else:
-        # return None
         pass
+    
+    ind += 1
 
 print(players_to_follow)
 print(len(players_to_follow))
