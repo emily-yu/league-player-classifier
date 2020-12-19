@@ -263,7 +263,7 @@ for first_match in data:
 
     base = {
         "summonerName": flattened[0]["summonerName"]
-    }
+    } 
     base.update(flattened[1])
     # flattened[1]["summonerName"] = flattened[0]["summonerName"] # port over for now otherwise no identification
     # writeable.append(flattened[1])
