@@ -59,6 +59,7 @@ def get_match_data(match_ids):
 
             # print(json.dumps(x.json(), indent=2))
             result.append(x)
+            print(len(result))
         else:
             pass
 
@@ -240,8 +241,8 @@ def flatten(data, participant):
 
     return (qualt_stats, metrics)
 
-# data = get_match_data(match_urls[0:1000])
-data = get_match_data(match_urls[0:10])
+data = get_match_data(match_urls[0:1000])
+# data = get_match_data(match_urls[0:10])
 # data = get_match_data(match_urls)
 
 writeable = []
