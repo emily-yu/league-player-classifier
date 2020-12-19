@@ -10,10 +10,11 @@ from sklearn.preprocessing import StandardScaler
 
 from kmeans import kmeans
 
+# pandas options
+pd.set_option('display.max_rows', 500)
+
 N_CLUSTERS = 5
 
-# df = pd.read_csv('oldwriteto.csv')
-# df = pd.read_csv('write.csv')
 df_quant = pd.read_csv('write_quant.csv')
 df_qual = pd.read_csv('write_qual.csv')
 
@@ -25,6 +26,23 @@ print("............................................back to main file............
 # to have a look @ cluster data (with both qual and quant data)
 for i, c in enumerate(clusters):
     print('cluster ', i, 'number of players in cluster: ', len(clusters[i]))
+    clusters[i] = clusters[i].dropna(axis=1, how='all')
+
+    ### SOME BASIC CLUSTER STATS
+    # role played
+    print(clusters[i]["role"].value_counts())
+
+    # lane played
+    print(clusters[i]["lane"].value_counts())
+    
+    print(clusters[i].mean())
+
+    # common spells taken
+    spelldf_lst = clusters[i]['spell1Id'].to_list() + clusters[i]['spell2Id'].to_list()
+    spelldf = pd.DataFrame({'spells': spelldf_lst })
+    print(spelldf.value_counts())
+
+    print()
 
 # ======= to consider to have some irrelevant graphs on pro players ========
 # for players that get dropped from roster: visualize how a player changes over time, what does their performance look like until they get dropped from the roster?
