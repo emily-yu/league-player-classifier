@@ -330,11 +330,18 @@ def process_perk_data(perkData): # [perk1, perk1Var1, perk1Var2, perk1Var3]
 
     print(json.dumps(flattened, indent=2))
     result = next((x for x in flattened if x["id"] == perkData), None)
-    print(result)  
+
+    # catch nonexistent lul
+    if result is None:
+        return 'NaN'
+
     return result["key"]
 
 perkName = process_perk_data(8237)
 print(perkName)
+
+def process_spell_data(spell_id):
+    pass
 
 # replace item names
 for match in writeableq:
@@ -342,6 +349,36 @@ for match in writeableq:
     for key in range(len(props)):
         item_id = props[key]
         match[item_id] = process_item_data(match[item_id])
+    
+    props = [
+        'perk0', 'perk0Var1', 'perk0Var2', 'perk0Var3', 
+        'perk1', 'perk1Var1', 'perk1Var2', 'perk1Var3', 
+        'perk2', 'perk2Var1', 'perk2Var2', 'perk2Var3', 
+        'perk3', 'perk3Var1', 'perk3Var2', 'perk3Var3',
+        'perk4', 'perk4Var1', 'perk4Var2', 'perk4Var3',
+        'perk5', 'perk5Var1', 'perk5Var2', 'perk5Var3',
+        'perkPrimaryStyle',
+        'perkSubStyle',
+        'statPerk1', 'statPerk2'
+        ]
+    for key in range(len(props)):
+        perk_id = props[key]
+        match[perk_id] = process_perk_data(match[perk_id])
+
+    props = [
+        'championId'
+    ]
+    for key in range(len(props)):
+        champ_id = props[key]
+        match[champ_id] = process_champion_data(match[champ_id])
+
+    # props = [
+    #     'spell1Id',
+    #     'spell2Id'
+    # ]
+    # for key in range(len(props)):
+    #     spell_id = props[key]
+    #     match[spell_id] = process_spell_data(match[spell_id])
 
 print(writeableq)
 # perform write operation
