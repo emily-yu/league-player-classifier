@@ -71,6 +71,7 @@ pro_tournaments_teams = tournament_mappings(pd.read_csv('league_pro_matches_data
 tournamentlist = []
 teamslist = []
 tournamentplayerct = []
+net_accuracy = []
 for tournament in pro_tournaments_teams.keys():
     totalNoPlayers = 0
     tournamentlist.append(tournament)
@@ -88,6 +89,9 @@ for tournament in pro_tournaments_teams.keys():
 
     # evaluate accuracy / role error for each team here
     team_roster = pro_tournaments_teams[tournament]
+
+    accuracy = 0
+    accuracy_count = 0
     for team in team_roster:
         team_name, team_roster = list(team.items())[0]
 
@@ -109,6 +113,11 @@ for tournament in pro_tournaments_teams.keys():
             print("[TODO] EVALUATE FOR STATS")
             print(team_roster)
             print(roster_classes)
+            accuracy += float(len(set(roster_classes)) / len(roster_classes))
+            accuracy_count += 1
+
+    tournamentAcc = accuracy / accuracy_count
+    net_accuracy.append(tournamentAcc)
 
     teamslist.append(','.join(teams))
 
@@ -118,6 +127,7 @@ for tournament in pro_tournaments_teams.keys():
 figure1['Tournament'] = tournamentlist
 figure1['Teams'] = teamslist
 figure1['No. of Players'] = tournamentplayerct
+figure1['Accuracy'] = net_accuracy
     
 print(figure1)
 #####################################################################################################################################################################################
