@@ -11,7 +11,7 @@ from sklearn.preprocessing import StandardScaler
 from kmeans import kmeans
 
 # pandas options
-pd.set_option('display.max_rows', 500)
+# pd.set_option('display.max_rows', 500)
 
 N_CLUSTERS = 5
 
@@ -27,6 +27,7 @@ print("............................................back to main file............
 commonality = {}
 
 # cluster data
+clusterqs = [] # qualitative
 for i, c in enumerate(clusters):
     print('cluster ', i, 'number of players in cluster: ', len(clusters[i]))
     # clusters[i] = clusters[i].dropna(axis=1, how='all')
@@ -35,6 +36,7 @@ for i, c in enumerate(clusters):
     subdf_qual = df_clusters[df_clusters['cluster'] == i]
     subdf_qual = subdf_qual.merge(df_qual, on="summonerName", how = 'left')
     print(subdf_qual)
+    clusterqs.append(subdf_qual)
 
     # create row commonality rankings { ROLE: 1, ROLE: 0.5, ROLE: 0.0, ROLE: -0.5, ROLE: -1.0 } for calculating the role score
     # example (for all 5 roles existing in cluster)
@@ -101,6 +103,7 @@ tournamentlist = []
 teamslist = []
 tournamentplayerct = []
 net_accuracy = []
+net_role_error = []
 for tournament in pro_tournaments_teams.keys():
     totalNoPlayers = 0
     tournamentlist.append(tournament)
@@ -120,7 +123,8 @@ for tournament in pro_tournaments_teams.keys():
     team_roster = pro_tournaments_teams[tournament]
 
     accuracy = 0
-    accuracy_count = 0
+    role_err = 0
+    count = 0
     for team in team_roster:
         team_name, team_roster = list(team.items())[0]
 
@@ -136,18 +140,51 @@ for tournament in pro_tournaments_teams.keys():
             # is there an assigned cluster?
             if len(clust) > 0:
                 roster_classes.append(clust[0])
+            else:
+                roster_classes.append(None)
 
         # needs to be more than 1; if only 1 element, will never overlap
-        if len(roster_classes) > 1:
-            print("[TODO] EVALUATE FOR STATS")
-            print(team_roster)
-            print(roster_classes)
-            accuracy += float(len(set(roster_classes)) / len(roster_classes))
-            accuracy_count += 1
+        none_removed = [x for x in roster_classes if x is not None]
+        if len(none_removed) > 1:
+            # print(team_roster)
+            # print(roster_classes)
 
-    tournamentAcc = accuracy / accuracy_count
+            # evaluate accuracy
+            accuracy += float(len(set(none_removed)) / len(none_removed))
+
+            # [TODO] evaluate each member's role error (using commonality dict)
+            # negative is off from correct result, positive is correctness
+            for ind in range(len(team_roster) - 1):
+                user = team_roster[ind]
+                cluster = roster_classes[ind]
+                # print(user, cluster)
+
+                # calculate role error for each memb being evaluated, add avg to role_err
+                if cluster is not None:
+                    # print(commonality[cluster])
+                    membdf = clusterqs[cluster][['summonerName', 'lane', 'cluster']]
+                    membdf = membdf[membdf['summonerName'] == user]
+                    membdf = membdf['lane'].value_counts()
+                    membdf = membdf.to_dict()
+
+                    subrole_err = 0
+                    count_err = 0
+                    for membrole in membdf:
+                        # print(membrole, membdf[membrole])
+                        subrole_err += commonality[cluster][membrole] * membdf[membrole]
+                        count_err += membdf[membrole]
+                    if count_err > 0:
+                        role_err += float(subrole_err) / count_err
+
+                # average out on line 158
+
+            count += 1
+
+    tournamentAcc = accuracy / count
     net_accuracy.append(tournamentAcc)
+    net_role_error.append(role_err / count)
 
+    print(','.join(teams))
     teamslist.append(','.join(teams))
 
     tournamentplayerct.append(totalNoPlayers)
@@ -157,6 +194,7 @@ figure1['Tournament'] = tournamentlist
 figure1['Teams'] = teamslist
 figure1['No. of Players'] = tournamentplayerct
 figure1['Accuracy'] = net_accuracy
+figure1['Role Error'] = net_role_error
     
 print(figure1)
 #####################################################################################################################################################################################
