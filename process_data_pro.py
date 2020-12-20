@@ -100,11 +100,12 @@ for tournament in pro_tournaments_teams.keys():
             clust = cluster_with_user(memb, df_clusters)
             clust = clust.to_list()
 
-            # needs to be more than 1; if only 1 element, will never overlap
-            if len(clust) > 1:
+            # is there an assigned cluster?
+            if len(clust) > 0:
                 roster_classes.append(clust[0])
-        
-        if len(roster_classes) > 0:
+
+        # needs to be more than 1; if only 1 element, will never overlap
+        if len(roster_classes) > 1:
             print("[TODO] EVALUATE FOR STATS")
             print(team_roster)
             print(roster_classes)
