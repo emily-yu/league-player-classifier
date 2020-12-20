@@ -75,7 +75,8 @@ def kmeans(N_CLUSTERS, df_quant, df_qual):
     # print(df_X_scaled.head())
 
     # create and fit data for model
-    kmeans = KMeans(init='random', n_clusters=N_CLUSTERS, n_init=10)
+    # kmeans = KMeans(init='random', n_clusters=N_CLUSTERS, n_init=10)
+    kmeans = KMeans(algorithm='auto', copy_x=True, init='k-means++', max_iter=300, n_clusters=N_CLUSTERS, n_init=10, n_jobs=1, precompute_distances='auto', random_state=None, tol=0.0001, verbose=0)
     kmeans.fit(X_scaled)
 
     # Determine which clusters each data point belongs to:

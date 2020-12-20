@@ -30,10 +30,17 @@ print("............................................back to main file............
 # cluster commonality - for role score
 commonality = {}
 
+# figure data
+df_clusterno = []
+df_playercount = []
+df_roleerror = []
+
 # cluster data
 clusterqs = [] # qualitative
 for i, c in enumerate(clusters):
     print('cluster ', i, 'number of players in cluster: ', len(clusters[i]))
+    df_clusterno.append(i)
+
     removed = clusters[i][clusters[i]['win'] < 0.19].index.to_list()  # wr must be greater than 0.2
     print(removed)
     # clusters[i] = clusters[i].dropna(axis=1, how='all')
@@ -45,6 +52,7 @@ for i, c in enumerate(clusters):
     subdf_qual = subdf_qual.merge(df_qual, on="summonerName", how = 'left') # merge qualitative values into summoners
     print(subdf_qual)
     clusterqs.append(subdf_qual)
+    df_playercount.append(len(subdf_qual))
 
     # create row commonality rankings { ROLE: 1, ROLE: 0.5, ROLE: 0.0, ROLE: -0.5, ROLE: -1.0 } for calculating the role score
     # example (for all 5 roles existing in cluster)
@@ -73,14 +81,19 @@ for i, c in enumerate(clusters):
 
     # role error for cluster
     subdf_qual['laneval'] = subdf_qual['lane'].map(commonality[i])
-    print(subdf_qual.columns)
-    print(subdf_qual['laneval'].mean())
+    role_err = subdf_qual['laneval'].mean()
+    df_roleerror.append(role_err)
 
-    # subrole_err = 0
-    # count_err = 0
-    # for membrole in membdf:
-    #     # print(membrole, membdf[membrole])
-    #     subrole_err += commonality[cluster][membrole] * membdf[membrole]
-    #     count_err += membdf[membrole]
-    # if count_err > 0:
-        # role_err += float(subrole_err) / count_err
+    # accuracy
+    playerlist = subdf_qual['summonerName'].unique()
+    for player in playerlist:
+        playerdf = subdf_qual[subdf_qual['summonerName'] == player]
+        accepted = playerdf.value_counts('lane')[:2]
+        # print(player, accepted)
+
+figure2 = pd.DataFrame()
+figure2['Cluster'] = df_clusterno
+figure2['Player Count'] = df_playercount
+figure2['Role Error'] = df_roleerror
+
+print(figure2)
