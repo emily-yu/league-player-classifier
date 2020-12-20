@@ -27,39 +27,60 @@ clusters, df_clusters = kmeans(N_CLUSTERS, df_quant, df_qual)
 
 print("............................................back to main file............................................")
 
-# to have a look @ cluster data (with both qual and quant data)
+# cluster commonality - for role score
+commonality = {}
+
+# cluster data
+clusterqs = [] # qualitative
 for i, c in enumerate(clusters):
     print('cluster ', i, 'number of players in cluster: ', len(clusters[i]))
-    clusters[i] = clusters[i].dropna(axis=1, how='all')
+    removed = clusters[i][clusters[i]['win'] < 0.19].index.to_list()  # wr must be greater than 0.2
+    print(removed)
+    # clusters[i] = clusters[i].dropna(axis=1, how='all')
 
-    ### SOME BASIC CLUSTER STATS
-    # role played
-    # print(clusters[i]["role"].value_counts())
+    # qualitative
+    subdf_qual = df_clusters[df_clusters['cluster'] == i]
+    inds = subdf_qual[ subdf_qual.index.isin(removed) ].index # drop values that are in list to remove
+    subdf_qual.drop(inds, inplace=True)
+    subdf_qual = subdf_qual.merge(df_qual, on="summonerName", how = 'left') # merge qualitative values into summoners
+    print(subdf_qual)
+    clusterqs.append(subdf_qual)
 
-    # lane played
-    # print(clusters[i]["lane"].value_counts())
-    
-    print(clusters[i].mean())
+    # create row commonality rankings { ROLE: 1, ROLE: 0.5, ROLE: 0.0, ROLE: -0.5, ROLE: -1.0 } for calculating the role score
+    # example (for all 5 roles existing in cluster)
+    # commonality[i] = {
+    #     rolestats[0]: 1.0,
+    #     rolestats[1]: 0.5,
+    #     rolestats[2]: 0.0,
+    #     rolestats[3]: -0.5,
+    #     rolestats[4]: -1.0
+    # }
+    rolestats = subdf_qual['lane'].value_counts().index.tolist()
+    decrement_factor = 2.0 / (len(rolestats) - 1)
+    weight = 1.0
+    icommon = {}
+    for j in range(len(rolestats)): 
+        # commonality[i][j] = weight
+        icommon[rolestats[j]] = weight
+        weight -= decrement_factor
+    commonality[i] = icommon
 
-    # common spells taken
-    # spelldf_lst = clusters[i]['spell1Id'].to_list() + clusters[i]['spell2Id'].to_list()
-    # spelldf = pd.DataFrame({'spells': spelldf_lst })
-    # print(spelldf.value_counts())
+    print(commonality)
 
-    print()
+    accuracy = 0
+    role_err = 0
+    count = 0
 
-# ======= to consider to have some irrelevant graphs on pro players ========
-# for players that get dropped from roster: visualize how a player changes over time, what does their performance look like until they get dropped from the roster?
-# does side affect how the player acts?
+    # role error for cluster
+    subdf_qual['laneval'] = subdf_qual['lane'].map(commonality[i])
+    print(subdf_qual.columns)
+    print(subdf_qual['laneval'].mean())
 
-##### > select based on ROLE [after WIP], to classify players based on ROLE (since TOP will have diff stats from SUPP, etc.)**
-
-
-
-### reccomendation system useing kmeans -> collaborative filtering
-
-# find similar in cluster
-def reccommendation_for_similar_user(cluster, user):
-    pass
-
-## print top 5 recommendations
+    # subrole_err = 0
+    # count_err = 0
+    # for membrole in membdf:
+    #     # print(membrole, membdf[membrole])
+    #     subrole_err += commonality[cluster][membrole] * membdf[membrole]
+    #     count_err += membdf[membrole]
+    # if count_err > 0:
+        # role_err += float(subrole_err) / count_err
