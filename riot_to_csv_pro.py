@@ -418,17 +418,12 @@ def write_summoner_to_csv(summonerName, has_headers):
 df = pd.read_csv('league_pro_matches_data/2019-spring-match.csv')
 players_to_follow = df['player'].unique()
 
-# manually map everything holy moly
-server_mappings = {
-    'Fnatic': 'eu1'
-}
+# # create script to automate riot api sample requests and fill in csv
+# api_key = input("API KEY: ")
 
-# create script to automate riot api sample requests and fill in csv
-api_key = input("API KEY: ")
+# # summonerName = 'Bwipo'
+# has_headers = False
 
-# summonerName = 'Bwipo'
-has_headers = False
-
-for summonerName in players_to_follow:
-    write_summoner_to_csv(summonerName, has_headers)
-    has_headers = True
+# for summonerName in players_to_follow:
+#     write_summoner_to_csv(summonerName, has_headers)
+#     has_headers = True

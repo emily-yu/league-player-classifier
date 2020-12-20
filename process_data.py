@@ -7,8 +7,12 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
-
+import json
 from kmeans import kmeans
+
+# utility
+def pj(inp):
+    print(json.dumps(inp, indent=2))
 
 # pandas options
 pd.set_option('display.max_rows', 500)
@@ -43,6 +47,57 @@ for i, c in enumerate(clusters):
     print(spelldf.value_counts())
 
     print()
+
+#####################################################################################################################################################################################
+# see paper
+figure1 = pd.DataFrame()
+
+# map each player to its league
+def tournament_mappings(df):
+    pro_map = {}
+    team_mapping = df[['league', 'player', 'team']]
+    for league in df['league'].unique():
+        print(league)
+        leaguedict = []
+        print(leaguedict)
+        leaguedf = team_mapping[team_mapping['league'] == league]
+        for team in leaguedf['team'].unique(): 
+            # print(team)
+            teamdf = leaguedf[leaguedf['team'] == team]
+            # print(team, teamdf['player'].unique())
+            # print({ str(team) : teamdf['player'].unique().tolist() })
+            print(type(teamdf['player'].unique().tolist()))
+            leaguedict.append({str(team): teamdf['player'].unique().tolist()})
+            pj(leaguedict)
+
+        pro_map[league] = leaguedict
+    return pro_map
+
+pro_tournaments_teams = tournament_mappings(pd.read_csv('league_pro_matches_data/2019-spring-match.csv'))
+tournamentlist = []
+teamslist = []
+tournamentplayerct = []
+for tournament in pro_tournaments_teams.keys():
+    totalNoPlayers = 0
+    tournamentlist.append(tournament)
+
+    print(tournamentlist)
+    players = []
+    for team in pro_tournaments_teams[tournament]:
+        key, value = list(team.items())[0]
+        totalNoPlayers += len(value)
+        players.append(key)
+    teamslist.append(','.join(players))
+
+    tournamentplayerct.append(totalNoPlayers)
+
+figure1['Tournament'] = tournamentlist
+figure1['Teams'] = teamslist
+figure1['No. of Players'] = tournamentplayerct
+# figure1['Tournament'] = pro_tournaments_teams.items()[0]
+print(figure1)
+#####################################################################################################################################################################################
+
 
 # ======= to consider to have some irrelevant graphs on pro players ========
 # for players that get dropped from roster: visualize how a player changes over time, what does their performance look like until they get dropped from the roster?
