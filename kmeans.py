@@ -144,11 +144,12 @@ def kmeans(N_CLUSTERS, df_quant, df_qual):
 
         # merge cluster on qualitative values
         # use for recommender
-        clusters[i] = clusters[i].merge(df_qual, on="summonerName", how = 'left')
+
+        # clusters[i] = clusters[i].merge(df_qual, on="summonerName", how = 'left')
 
         print(clusters[i]) # <<< clusters to use
         # print(clusters[i].index.tolist())
 
-    # return (clusters, X_reduceddf)
-    return clusters
+    return (clusters, X_reduceddf)
+    # return clusters
     
