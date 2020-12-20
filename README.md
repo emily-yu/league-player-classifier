@@ -4,6 +4,8 @@ In professional gaming, team compositions are crafted carefully to ensure that p
 
 For an extremely rather shoddy explanation of this work written at ungodly hours, please reference the following [paper](docs/league of legumes_  pros vs challenjour (1).pdf) or [presentation](docs/league of legumes_  pros vs challenjour.pptx). 
 
+**league-player-classifier was created under Riot Games' "[Legal Jibber Jabber](https://www.riotgames.com/en/legal)" policy using assets owned by Riot Games.  Riot Games does not endorse or sponsor this project.**
+
 ## Usage
 
 Install all requirements from `requirements.txt` using `pip install requirements.txt`. 
