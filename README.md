@@ -2,8 +2,6 @@
 
 In professional gaming, team compositions are crafted carefully to ensure that players are of the highest skill level compatible with each other. However, the process by which players are able to work together, in both professional and non-professional gameplay, leaves room for exploration. In this paper, we use game data sourced directly from League of Legends to analyze similarities between ranked gameplay to gain insight on whether archetypes exist in professional and non-professional gaming.
 
-For an extremely rather shoddy explanation of this work written at ungodly hours, please reference the following [paper](docs/paper.pdf) or [presentation](docs/presentation.pptx). 
-
 **league-player-classifier was created under Riot Games' "[Legal Jibber Jabber](https://www.riotgames.com/en/legal)" policy using assets owned by Riot Games.  Riot Games does not endorse or sponsor this project.**
 
 ## Usage
@@ -153,3 +151,7 @@ The above is an archive of my submissions for milestone checkins.
 /archive_ipynbs
 ```
 Previous work that was used before migration to standard `.py` files, as `.ipynb` files do not register well with Git. 
+
+...
+
+For an extremely rather shoddy explanation of this work written at ungodly hours, please reference the following [paper](docs/paper.pdf) or [presentation](docs/presentation.pptx). 
