@@ -19,13 +19,41 @@ df_quant = pd.read_csv('write_quant_pro.csv')
 df_qual = pd.read_csv('write_qual_pro.csv')
 
 # perform kmeans
-clusters, df_clusters = kmeans(N_CLUSTERS, df_quant, df_qual)
+clusters, df_clusters = kmeans(N_CLUSTERS, df_quant, df_qual) # quantatitive values, all values
 
 print("............................................back to main file............................................")
-# to have a look @ cluster data (with both qual and quant data)
+
+# cluster commonality - for role score
+commonality = {}
+
+# cluster data
 for i, c in enumerate(clusters):
     print('cluster ', i, 'number of players in cluster: ', len(clusters[i]))
     # clusters[i] = clusters[i].dropna(axis=1, how='all')
+
+    # qualitative
+    subdf_qual = df_clusters[df_clusters['cluster'] == i]
+    subdf_qual = subdf_qual.merge(df_qual, on="summonerName", how = 'left')
+    print(subdf_qual)
+
+    # create row commonality rankings { ROLE: 1, ROLE: 0.5, ROLE: 0.0, ROLE: -0.5, ROLE: -1.0 } for calculating the role score
+    # example (for all 5 roles existing in cluster)
+    # commonality[i] = {
+    #     rolestats[0]: 1.0,
+    #     rolestats[1]: 0.5,
+    #     rolestats[2]: 0.0,
+    #     rolestats[3]: -0.5,
+    #     rolestats[4]: -1.0
+    # }
+    rolestats = subdf_qual['lane'].value_counts().index.tolist()
+    decrement_factor = 2.0 / (len(rolestats) - 1)
+    weight = 1.0
+    icommon = {}
+    for j in range(len(rolestats)): 
+        # commonality[i][j] = weight
+        icommon[rolestats[j]] = weight
+        weight -= decrement_factor
+    commonality[i] = icommon
 
     ### SOME BASIC CLUSTER STATS
     # role played
@@ -34,7 +62,7 @@ for i, c in enumerate(clusters):
     # lane played
     # print(clusters[i]["lane"].value_counts())
     
-    print(clusters[i].mean())
+    # print(clusters[i].mean())
 
     # common spells taken
     # spelldf_lst = clusters[i]['spell1Id'].to_list() + clusters[i]['spell2Id'].to_list()
@@ -43,6 +71,7 @@ for i, c in enumerate(clusters):
 
     print()
 
+print(commonality)
 # ======= to consider to have some irrelevant graphs on pro players ========
 # for players that get dropped from roster: visualize how a player changes over time, what does their performance look like until they get dropped from the roster?
 # does side affect how the player acts?
