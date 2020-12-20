@@ -57,18 +57,11 @@ def tournament_mappings(df):
     pro_map = {}
     team_mapping = df[['league', 'player', 'team']]
     for league in df['league'].unique():
-        print(league)
         leaguedict = []
-        print(leaguedict)
         leaguedf = team_mapping[team_mapping['league'] == league]
         for team in leaguedf['team'].unique(): 
-            # print(team)
             teamdf = leaguedf[leaguedf['team'] == team]
-            # print(team, teamdf['player'].unique())
-            # print({ str(team) : teamdf['player'].unique().tolist() })
-            print(type(teamdf['player'].unique().tolist()))
             leaguedict.append({str(team): teamdf['player'].unique().tolist()})
-            pj(leaguedict)
 
         pro_map[league] = leaguedict
     return pro_map
@@ -81,7 +74,6 @@ for tournament in pro_tournaments_teams.keys():
     totalNoPlayers = 0
     tournamentlist.append(tournament)
 
-    print(tournamentlist)
     players = []
     for team in pro_tournaments_teams[tournament]:
         key, value = list(team.items())[0]
